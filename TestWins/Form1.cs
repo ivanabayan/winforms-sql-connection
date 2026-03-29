@@ -8,12 +8,14 @@ namespace TestWins;
 public partial class Form1 : Form
 {
     private readonly StudentController controller = new StudentController();
+    private TextBox txtStudentId;
 
     public Form1()
     {
         InitializeComponent();
         txtStudentId = new TextBox(); // Initialize StudentId textbox (hidden)
         txtStudentId.Visible = false; // Hidden field for updates/deletes
+        Controls.Add(txtStudentId);
         loadData();
     }
 
@@ -100,11 +102,5 @@ public partial class Form1 : Form
         txtName.Text = "";
         txtAge.Text = "";
         txtCourse.Text = "";
-    }
-}    }
-
-    private void dataGridView1_CellClick(object sender, EventArgs e)
-    {
-
     }
 }
