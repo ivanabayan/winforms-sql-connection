@@ -1,22 +1,24 @@
-namespace TestWins.Model;
-
-//dotnet add package MySql.Data
 using MySql.Data.MySqlClient;
+
+namespace TestWins.Repoository;
 
 public class ConnectionSql
 {
     private readonly string _connectionString = "server=localhost;database=student;uid=root;pwd=root";
-        private MySqlConnection _conn;
 
     public MySqlConnection connectSql()
     {
-
-        Console.WriteLine("Connecting to DB");
-
-        _conn = new MySqlConnection(_connectionString);
-
-        Console.WriteLine(_conn == null ? "Datbase Connection Failed" : "Database connection successful");
-
-        return _conn;
+        try
+        {
+            var conn = new MySqlConnection(_connectionString);
+            conn.Open(); // Test the connection
+            conn.Close();
+            return new MySqlConnection(_connectionString); // return a fresh connection for use
+        }
+        catch (Exception ex)
+        {
+            // If connection fails, throw an error
+            throw new Exception("Database connection failed: " + ex.Message);
+        }
     }
 }
