@@ -4,19 +4,18 @@ using TestWins.Model;
 
 namespace TestWins.Repoository;
 
-
 public class StudentRepository
 {
-
     private readonly ConnectionSql _db = new ConnectionSql();
 
-    //Create CRUD functionalities
+    // Create CRUD functionalities
     public void create(Student student)
     {
-        using var conn = _db.connectSql(); //Connection
-        conn.Open(); //Open Connection
+        using var conn = _db.connectSql(); // Connection
+        conn.Open(); // Open Connection
 
-        string query = "INSERT INTO students VALUES(@name, @age, @course)";
+        // Specify columns in case studentId is auto-increment
+        string query = "INSERT INTO students (Name, age, course) VALUES(@name, @age, @course)";
 
         using var cmd = new MySqlCommand(query, conn);
 
@@ -35,6 +34,52 @@ public class StudentRepository
         conn.Open();
 
         string query = "SELECT * FROM students";
+        using var cmd = new MySqlCommand(query, conn);
+        using var reader = cmd.ExecuteReader();
+
+        while (reader.Read())
+        {
+            list.Add(new Student
+            {
+                studentId = reader.GetString("studentId"),
+                Name = reader.GetString("Name"),
+                age = reader.GetInt32("age"),
+                course = reader.GetString("course"),
+            });
+        }
+
+        return list;
+    }
+
+    public void update(Student student)
+    {
+        using var conn = _db.connectSql();
+        conn.Open();
+
+        string query = "UPDATE students SET Name=@name, age=@age, course=@course WHERE studentId=@id";
+
+        using var cmd = new MySqlCommand(query, conn);
+
+        cmd.Parameters.AddWithValue("@id", student.studentId);
+        cmd.Parameters.AddWithValue("@name", student.Name);
+        cmd.Parameters.AddWithValue("@age", student.age);
+        cmd.Parameters.AddWithValue("@course", student.course);
+
+        cmd.ExecuteNonQuery();
+    }
+
+    public void delete(string id)
+    {
+        using var conn = _db.connectSql();
+        conn.Open();
+
+        string query = "DELETE FROM students WHERE studentId=@id";
+        using var cmd = new MySqlCommand(query, conn);
+
+        cmd.Parameters.AddWithValue("@id", id); // Added missing parameter
+        cmd.ExecuteNonQuery();
+    }
+}        string query = "SELECT * FROM students";
         using var cmd = new MySqlCommand(query, conn);
         using var reader = cmd.ExecuteReader();
 
@@ -81,5 +126,4 @@ public class StudentRepository
 
         cmd.ExecuteNonQuery();
     }
-
 }
